@@ -23,8 +23,8 @@
 	    (let ((orig (s48-rational->s4101-rational
 			 (eval (s4101-rational->s48-rational exp)
 			       (interaction-environment)))))
-	      (eval '(load "undefine.scm") (interaction-environment))
-	      (eval '(load "ini.scm") (interaction-environment))
+	      (eval '(load "../undefine.scm") (interaction-environment))
+	      (eval '(load "../ini.scm") (interaction-environment))
 	      (display name)
 	      (display ": ")
 	      (let ((val (eval exp (interaction-environment))))

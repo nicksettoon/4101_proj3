@@ -1,3 +1,4 @@
+
 (define (eqv? x y)
   (if (and (number? x) (number? y)) (b= x y)
       (eq? x y)))
@@ -95,6 +96,7 @@
 (define (eof-object? x)
   (eq? x 'end-of-file))
 
+; just works for Test101 and Test102
 (define (/ x y)
   (cond ((pair? y) 42)
 	((pair? x) '(rational 1 42))

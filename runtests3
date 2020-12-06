@@ -1,17 +1,40 @@
 #!/bin/bash
 
 SCHEME=scheme48
+TESTDIR=./Testing
 
-rm -f testreport.txt
-
-for i in Test?.scm Test??.scm Test???.scm; do
-    $SCHEME < $i >> testreport.txt 2>&1
-done
+case $1 in
+    '-init')
+    echo 'Testing init.scm'
+    for i in init.scm; do
+        $SCHEME -a batch < $i
+    done
+    echo y
+    exit
+    ;;
+    '-all')
+    echo 'Testing testbank.scm'
+    make testbank
+    cd $TESTDIR
+    tests=0
+    for i in bank.scm; do
+        $SCHEME -a batch < $i >> testreport.txt 2>&1
+    done
+    ;;
+    '')
+    echo 'Testing individual files'
+    make testfiles
+    cd $TESTDIR
+    for i in Test?.scm Test??.scm Test???.scm; do
+        $SCHEME -a batch < $i >> ../testreport.txt 2>&1
+    done
+    let "n = `ls Test*.scm | wc -l`"
+    ;;
+esac
 
 let "pass = `grep PASS testreport.txt | grep -v ERROR | wc -l`"
 let "fail = `grep FAIL testreport.txt | grep -v ERROR | wc -l`"
 let "error = `grep ERROR testreport.txt | wc -l`"
-let "n = `ls Test*.scm | wc -l`"
 errors=`echo "$n-$pass-$fail" | bc -q`
 
 egrep 'PASS|FAIL|ERROR' testreport.txt > report.txt
@@ -21,3 +44,8 @@ echo "  PASS:   $pass" >> report.txt
 echo "  FAIL:   $fail" >> report.txt
 echo "  ERROR:  $error" >> report.txt
 echo "  Errors: $errors" >> report.txt
+
+echo "report generated. opening for viewing"
+
+less testreport.txt
+less report.txt

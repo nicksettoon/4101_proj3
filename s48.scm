@@ -60,13 +60,13 @@
 	  (type-error "arguments of b< are not integers" #f))
       (type-error "arguments of b< are not integers" #f)))
 
-;; n-ary minus
-(define (- x . l)
-  (s48-- x (apply s48-+ l)))
-
-;; n-ary division
-(define (/ x . l)
-  (s48-/ x (apply s48-* l)))
+;;;; n-ary minus
+;;(define (- x . l)
+;;  (s48-- x (apply s48-+ l)))
+;;
+;;;; n-ary division
+;;(define (/ x . l)
+;;  (s48-/ x (apply s48-* l)))
 
 ;; The functions below are only used in the function test before
 ;; undefine.scm is loaded, so here using and is ok.  These functions
