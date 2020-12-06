@@ -13,10 +13,45 @@
 (rational? '(rational 4 5))
 (rational? 3)
 ; +
-; -
+    ; b+
+    (b+ 1 2)
+    (b+ 8 (rational 2 3))
+    (b+ (rational 5 12) 2)
+    (b+ (rational 1 2) (rational 4 5))
+    (b+ (rational 5 3) (rational 5 3))
+    (b+ "asdf" 2)
 ; *
+    ; b*
+    (b* 1 2)
+    (b* 8 (rational 2 3))
+    (b* (rational 5 12) 2)
+    (b* (rational 1 2) (rational 4 5))
+    (b* (rational 5 3) (rational 5 3))
+    (b* "asdf" 2)
+; -
+    ; b-
+    (b+ 1 2)
+    (b+ 8 (rational 2 3))
+    (b+ (rational 5 12) 2)
+    (b+ (rational 1 2) (rational 4 5))
+    (b+ (rational 5 3) (rational 5 3))
+    (b+ "asdf" 2)
 ; /
+    ; b/
+    (b+ 1 2)
+    (b+ 8 (rational 2 3))
+    (b+ (rational 5 12) 2)
+    (b+ (rational 1 2) (rational 4 5))
+    (b+ (rational 5 3) (rational 5 3))
+    (b+ "asdf" 2)
 ; =
+    ; b=
+    (b+ 1 2)
+    (b+ 8 (rational 2 3))
+    (b+ (rational 5 12) 2)
+    (b+ (rational 1 2) (rational 4 5))
+    (b+ (rational 5 3) (rational 5 3))
+    (b+ "asdf" 2)
 ; zero?
 (zero? 1)
 (zero? 0)

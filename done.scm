@@ -1,7 +1,34 @@
+(define b< s48b<)
+(define b= s48b=)
+(define b/ s48b/)
+(define b- s48b-)
+; check helper function ids case of binary operation
+(define int-int 1)
+(define int-rat 2)
+(define rat-int 3)
+(define rat-rat 4)
+(define undef 5)
+
+(define (check x y)
+    (cond
+        ((integer? x)
+            (cond
+                ((integer? y) int-int)
+                ((rational? y) int-rat)
+                (else undef)))
+        ((rational? x)
+            (cond
+                ((integer? y) rat-int)
+                ((rational? y) rat-rat)
+                (else undef)))
+         (else undef)
+    )
+)
+
 ; rational
 (define (rational n d) (list 'rational n d))
-; integer?
 
+; integer?
 (define (integer? x)
     (if (boolean? x) #f
         (if (symbol? x) #f
@@ -55,11 +82,11 @@
 ; quotient
 (define (quotient a b) (let ()
     (define (getq a b q)
-            (let ((diff (- a b)))
+            (let ((diff (b- a b)))
                 (cond
                     ((< diff 0) q)
-                    ((= diff 0) (+ q 1))
-                    (else (getq diff b (+ q 1)))
+                    ((= diff 0) (b+ q 1))
+                    (else (getq diff b (b+ q 1)))
                 )
             ))
     (if (b= 0 b) (display "Don't divide by zero.") (getq a b 0)))
@@ -143,3 +170,127 @@
         (else (b= 0 x))
     )
 )
+; helper functions for getting un-simplified num and den of rational
+(define (num x) (cadr x))
+(define (den x) (caddr x))
+(define (mkrat num rat)
+    (rational (b* num (den rat)) (den rat))
+)
+
+; b+
+(define (b+ x y)
+    (let ((case (check x y)))
+        (cond
+            ((s48b= case int-int) ; TODO change to b=
+                (s48b+ x y)
+            )
+            ((s48b= case int-rat); TODO change to b=
+                (let
+                    ((ratx (mkrat x y)))
+                    (b+ ratx y))
+            )
+            ((s48b= case rat-int); TODO change to b=
+                (b+ y x)
+            )
+            ((s48b= case rat-rat); TODO change to b=
+                (let* ((n1 (num x))
+                       (d1 (den x))
+                       (n2 (num y))
+                       (d2 (den y)))
+                    (if (s48b= d1 d2) ; TODO change to b=
+                        (let ()
+                            (simplify (rational (b+ n1 n2) d1)))
+                        (let ((newd (b* d1 d2))
+                              (newn1 (b* n1 d2))
+                              (newn2 (b* n2 d1)))
+                            (b+ (rational newn1 newd) (rational newn2 newd))
+                        )
+                    )
+                )
+            )
+            (else (s48b+ x y))
+        )
+    )
+)
+
+; b*
+(define (b* x y)
+    (let ((case (check x y)))
+        (cond
+            ((s48b= case int-int); TODO change to b=
+                (s48b* x y)
+            )
+            ((s48b= case int-rat); TODO change to b=
+                (simplify (rational (b* x (num y)) (den y)))
+            )
+            ((s48b= case rat-int); TODO change to b=
+                (b* y x)
+            )
+            ((s48b= case rat-rat); TODO change to b=
+                (let* ((n1 (num x))
+                      (d1 (den x))
+                      (n2 (num y))
+                      (d2 (den y))
+                      (newn (b* n1 n2))
+                      (newd (b* d1 d2)))
+                    (simplify (rational newn newd))
+                )
+            )
+            (else (s48b* x y))
+        )
+    )
+)
+
+; ; b-
+; (define (b- x y)
+;     (cond
+;         ((integer? x) (b= 0 x))
+;         ((rational? x) (b= 0 (numerator x)))
+;         (else (b= 0 x))
+;     )
+; )
+; 
+; ; b*
+; (define (b* x y)
+;     (cond
+;         ((integer? x) (b= 0 x))
+;         ((rational? x) (b= 0 (numerator x)))
+;         (else (b= 0 x))
+;     )
+; )
+; 
+; ; b/
+; (define (b/ x y)
+;     (cond
+;         ((integer? x) (b= 0 x))
+;         ((rational? x) (b= 0 (numerator x)))
+;         (else (b= 0 x))
+;     )
+; )
+; 
+; ; b=
+; (define (b= x y)
+;     (cond
+;         ((integer? x) (b= 0 x))
+;         ((rational? x) (b= 0 (numerator x)))
+;         (else (b= 0 x))
+;     )
+; )
+; 
+; ; b<
+; (define (b< x y)
+;     (cond
+;         ((integer? x) (b= 0 x))
+;         ((rational? x) (b= 0 (numerator x)))
+;         (else (b= 0 x))
+;     )
+; )
+
+; check test cases
+; (check 1 2)
+; (check 1 (rational 3 2))
+; (check (rational 1 2) 3)
+; (check (rational 1 2) (rational 4 6))
+; (check 2 "asdf")
+; (check (rational 2 3) "asdf")
+; (check "asdf" 45)
