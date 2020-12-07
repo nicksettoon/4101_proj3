@@ -14,27 +14,67 @@
 (rational? 3)
 ; +
     ; b+
-    (b+ 1 2)
-    (b+ 8 (rational 2 3))
-    (b+ (rational 5 12) 2)
-    (b+ (rational 1 2) (rational 4 5))
-    (b+ (rational 5 3) (rational 5 3))
+    ;; int-int
+    (b= 3 (b+ 1 2))
+    ;; int-rat
+    (b= (rational 1 -2) (b+ 4 (rational 9 -2)))
+    (b= (rational 17 2) (b+ 4 (rational -9 -2)))
+    (b= (rational 1 -2) (b+ -4 (rational 9 -2)))
+    (b= (rational 17 2) (b+ -4 (rational -9 -2)))
+    ;;; rat-int
+    (b= (rational 1 -2) (b+ (rational 9 -2) 4))
+    (b= (rational 17 2) (b+ (rational -9 -2) 4))
+    (b= (rational 1 -2) (b+ (rational 9 -2) -4))
+    (b= (rational 17 2) (b+ (rational -9 -2) -4))
+    ;; rat-rat
+    (b= (rational 13 10) (b+ (rational -1 -2) (rational 4 5)))
+    (b= (rational 3 10) (b+ (rational 1 -2) (rational 4 5)))
+    (b= 0 (b+ (rational 5 -3) (rational 5 3)))
+    (b= (rational 10 3) (b+ (rational -5 -3) (rational 5 3)))
+    (b+ "asdf" 2)
+; -
+    ; b-
+    ;; int-int
+    (b= 1 (b- -1 -2))
+    (b= -1 (b- 1 2))
+    (b= 3 (b- 1 -2))
+    (b= -3 (b- -1 2))
+    ;; int-rat
+    (b= (rational 17 2) (b- 4 (rational 9 -2)))
+    (b= (rational 1 -2) (b- 4 (rational -9 -2)))
+    (b= (rational 1 2) (b- -4 (rational 9 -2)))
+    (b= (rational -17 2) (b- -4 (rational -9 -2)))
+    ;;; rat-int
+    (b= (rational 17 -2) (b- (rational 9 -2) 4))
+    (b= (rational 1 2) (b- (rational -9 -2) 4))
+    (b= (rational 1 -2) (b- (rational 9 -2) -4))
+    (b= (rational 17 2) (b- (rational -9 -2) -4))
+    ;; rat-rat
+    (b= (rational 3 -10) (b- (rational -1 -2) (rational 4 5)))
+    (b= (rational 13 -10) (b- (rational 1 -2) (rational 4 5)))
+    (b= (rational 10 -3) (b- (rational 5 -3) (rational 5 3)))
+    (b= 0 (b- (rational -5 -3) (rational 5 3)))
     (b+ "asdf" 2)
 ; *
     ; b*
-    (b* 1 2)
-    (b* 8 (rational 2 3))
-    (b* (rational 5 12) 2)
-    (b* (rational 1 2) (rational 4 5))
-    (b* (rational 5 3) (rational 5 3))
-    (b* "asdf" 2)
-; -
-    ; b-
-    (b+ 1 2)
-    (b+ 8 (rational 2 3))
-    (b+ (rational 5 12) 2)
-    (b+ (rational 1 2) (rational 4 5))
-    (b+ (rational 5 3) (rational 5 3))
+    ;; int-int
+    (b= 2 (b* 1 2))
+    (b= -2 (b* -1 2))
+    ;; int-rat
+    (b= -18 (b* 4 (rational 9 -2)))
+    (b= 18 (b* 4 (rational -9 -2)))
+    (b= -18 (b* -4 (rational -9 -2)))
+    (b= 18 (b* -4 (rational 9 -2)))
+    ;;; rat-int
+    (b= (b* 4 (rational 9 -2)) -18)
+    (b= (b* 4 (rational -9 -2)) 18)
+    (b= (b* -4 (rational -9 -2)) -18)
+    (b= (b* -4 (rational 9 -2)) 18)
+    ;; rat-rat
+    (b= (rational 2 5) (b* (rational -1 -2) (rational 4 5)))
+    (b= (rational -2 5) (b* (rational 1 -2) (rational 4 5)))
+    (b= (rational 25 -9) (b* (rational 5 -3) (rational 5 3)))
+    (b= (rational 25 9) (b* (rational -5 -3) (rational 5 3)))
     (b+ "asdf" 2)
 ; /
     ; b/
@@ -46,12 +86,6 @@
     (b+ "asdf" 2)
 ; =
     ; b=
-    (b+ 1 2)
-    (b+ 8 (rational 2 3))
-    (b+ (rational 5 12) 2)
-    (b+ (rational 1 2) (rational 4 5))
-    (b+ (rational 5 3) (rational 5 3))
-    (b+ "asdf" 2)
 ; zero?
 (zero? 1)
 (zero? 0)
@@ -71,6 +105,14 @@
 (negative? (rational -5 1))
 (negative? (rational -5 -1))
 ; eqv? doesn't need to be n-ary
+(eqv? #t #t)
+(eqv? 2 2)
+(eq? #f (eqv? #t #f))
+(eq? #f (eqv? 1 2))
+(eq? #f (eqv? 1 #t))
+(eq? #f (eqv? #t 1))
+(eqv? (rational 1 2) (rational 1 2))
+(eq? #f (eqv? (rational 1 6) (rational 1 2)))
 ; equal?
 ; w that works for rationals
 (define x 42)
@@ -134,37 +176,6 @@
     ; assq
     ; assv
     ; assoc
-; (5 () 53 )
-; 42
-; '("Hello" "World!")
-; (define (fac n) (if (b= n 0) 1 (b* n (fac (b- n 1)))))
-; (fac 5)
-; (+ 2 3)
-; (5 2 5 3 2)
-; (define test 3)
-; (set! x (+ 3 4 5))
-; (1 3 4 . 3)
-; '(3 5 6)
-; '(define x 4)
-; '(define (double x) (+ x x))
-; (quote (define (double x) (+ x x)))
-; (quote (cond ((< x 4) 2) ((> x 9) 2) (else 10)))
-; (quote ((define x 4) (define x)))
-; (begin (set! x 6) (set! y 7) (* x y))
-; (let (x 2) (y 4) (z 8) (* x y z))
-; (cond ((= x y) 1) ((< x y) 2) (else (let (x 2) (y 4) (z 8) (* x y z))))
-; (define (fac n) (if (= n 0) 1 (* n (fac (- n 1)))))
-; (if (eq? x y) (+ x y) (begin (define x 5) (define (func2 x y) (* x y))))
-; (lambda (x y) (+ 3 (* x y)))
-; (define (list . l) l)
-; (define list (lambda l l))
-; (eqv? (rational 2 3) (rational 4 6))
-; (rational? 2)
-; (rational? (rational 4 3))
-; (rational? '(rational 4 3)
-; (number? 2)
-; (number? (rational 4 3))
-; (number? '(rational 4 3)
 
 ; - Baumgartnter's tests
 (eqv? 'x 'x)
