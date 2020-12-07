@@ -5,10 +5,15 @@
 ; +
 ; *
 ; /
+    ; b/
+; +
+; -
+; *
+; / 
 ; =
 ; equal?
-; w that works for rationals
 
+; w that works for rationals
 ;; if have time
     ; lcm
     ;; n-ary operators
