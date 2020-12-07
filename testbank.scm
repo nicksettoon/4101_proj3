@@ -19,9 +19,13 @@
     ;; int-rat
     (b= (rational 1 -2) (b+ 4 (rational 9 -2)))
     (b= (rational 17 2) (b+ 4 (rational -9 -2)))
+    (b= (rational 1 -2) (b+ -4 (rational 9 -2)))
+    (b= (rational 17 2) (b+ -4 (rational -9 -2)))
     ;;; rat-int
     (b= (rational 1 -2) (b+ (rational 9 -2) 4))
     (b= (rational 17 2) (b+ (rational -9 -2) 4))
+    (b= (rational 1 -2) (b+ (rational 9 -2) -4))
+    (b= (rational 17 2) (b+ (rational -9 -2) -4))
     ;; rat-rat
     (b= (rational 13 10) (b+ (rational -1 -2) (rational 4 5)))
     (b= (rational 3 10) (b+ (rational 1 -2) (rational 4 5)))
@@ -30,20 +34,48 @@
     (b+ "asdf" 2)
 ; -
     ; b-
-    (b+ 1 2)
-    (b+ 8 (rational 2 3))
-    (b+ (rational 5 12) 2)
-    (b+ (rational 1 2) (rational 4 5))
-    (b+ (rational 5 3) (rational 5 3))
+    ;; int-int
+    (b= 1 (b- -1 -2))
+    (b= -1 (b- 1 2))
+    (b= 3 (b- 1 -2))
+    (b= -3 (b- -1 2))
+    ;; int-rat
+    (b= (rational 17 2) (b- 4 (rational 9 -2)))
+    (b= (rational 1 -2) (b- 4 (rational -9 -2)))
+    (b= (rational 1 2) (b- -4 (rational 9 -2)))
+    (b= (rational -17 2) (b- -4 (rational -9 -2)))
+    ;;; rat-int
+    (b= (rational 17 -2) (b- (rational 9 -2) 4))
+    (b= (rational 1 2) (b- (rational -9 -2) 4))
+    (b= (rational 1 -2) (b- (rational 9 -2) -4))
+    (b= (rational 17 2) (b- (rational -9 -2) -4))
+    ;; rat-rat
+    (b= (rational 3 -10) (b- (rational -1 -2) (rational 4 5)))
+    (b= (rational 13 -10) (b- (rational 1 -2) (rational 4 5)))
+    (b= (rational 10 -3) (b- (rational 5 -3) (rational 5 3)))
+    (b= 0 (b- (rational -5 -3) (rational 5 3)))
     (b+ "asdf" 2)
 ; *
     ; b*
-    (b* 1 2)
-    (b* 8 (rational 2 3))
-    (b* (rational 5 12) 2)
-    (b* (rational 1 2) (rational 4 5))
-    (b* (rational 5 3) (rational 5 3))
-    (b* "asdf" 2)
+    ;; int-int
+    (b= 2 (b* 1 2))
+    (b= -2 (b* -1 2))
+    ;; int-rat
+    (b= -18 (b* 4 (rational 9 -2)))
+    (b= 18 (b* 4 (rational -9 -2)))
+    (b= -18 (b* -4 (rational -9 -2)))
+    (b= 18 (b* -4 (rational 9 -2)))
+    ;;; rat-int
+    (b= (b* 4 (rational 9 -2)) -18)
+    (b= (b* 4 (rational -9 -2)) 18)
+    (b= (b* -4 (rational -9 -2)) -18)
+    (b= (b* -4 (rational 9 -2)) 18)
+    ;; rat-rat
+    (b= (rational 2 5) (b* (rational -1 -2) (rational 4 5)))
+    (b= (rational -2 5) (b* (rational 1 -2) (rational 4 5)))
+    (b= (rational 25 -9) (b* (rational 5 -3) (rational 5 3)))
+    (b= (rational 25 9) (b* (rational -5 -3) (rational 5 3)))
+    (b+ "asdf" 2)
 ; /
     ; b/
     (b+ 1 2)

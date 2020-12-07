@@ -12,7 +12,6 @@
 (define rat-rat 4)
 (define undef 5)
 
-
 ; rational
 (define (rational n d) (list 'rational n d))
 
@@ -61,11 +60,13 @@
 
 ; numerator?
 (define (numerator rat) (let ((result (simplify rat)))
-    (if (integer? result) result (cadr result))))
+    (if (integer? result) result (cadr result)))
+)
 
 ; denominator?
 (define (denominator rat) (let ((result (simplify rat)))
-    (if (integer? result) 1 (caddr result))))
+    (if (integer? result) 1 (caddr result)))
+)
 
 ; quotient
 (define (quotient a b) (let ()
@@ -236,6 +237,16 @@
     )
 )
 
+;; b-
+(define (b- x y)
+    (let* ((x (simplify x))
+           (y (simplify y))
+           (case (check x y)))
+        (if (negative? y)
+            (b+ x (abs y))
+            (b+ x (b* -1 y))))
+)
+
 ; b=
 (define (b= x y)
     (let* ((x (simplify x))
@@ -269,15 +280,6 @@
 
 ; ; b/
 ; (define (b/ x y)
-;     (cond
-;         ((integer? x) (b= 0 x))
-;         ((rational? x) (b= 0 (numerator x)))
-;         (else (b= 0 x))
-;     )
-; )
-; 
-; ; b=
-; (define (b= x y)
 ;     (cond
 ;         ((integer? x) (b= 0 x))
 ;         ((rational? x) (b= 0 (numerator x)))
