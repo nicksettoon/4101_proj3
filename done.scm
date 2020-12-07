@@ -12,22 +12,6 @@
 (define rat-rat 4)
 (define undef 5)
 
-(define (check x y)
-    (let ((x (simplify x))
-          (y (simplify y)))
-        (cond
-            ((integer? x)
-                (cond
-                    ((integer? y) int-int)
-                    ((rational? y) int-rat)
-                    (else undef)))
-            ((rational? x)
-                (cond
-                    ((integer? y) rat-int)
-                    ((rational? y) rat-rat)
-                    (else undef)))
-            (else undef)))
-)
 
 ; rational
 (define (rational n d) (list 'rational n d))
@@ -190,54 +174,38 @@
     )
 )
 
-(define (mkrat num rat) ; turns num into a rational that can be added to rat
+(define (mkrat int rat) ; turns num into a rational that can be added to rat
     (let ((d (abs (den rat))))
-        (rational (b* num d) d)
+        (rational (b* int d) d)
     )
 )
 
 ; b+ TODO handle negative rationals
 (define (b+ x y)
-    (let* ((case (check x y)))
+    (let* ((x (simplify x))
+           (y (simplify y))
+           (case (check x y)))
         (cond
             ((s48b= case int-int) ; TODO change to b=
-                (newline)
-                (display "int-int")
-                (s48b+ x y)
-            )
+                (s48b+ x y))
             ((s48b= case int-rat); TODO change to b=
-                (newline)
-                (display "int-rat")
                 (let
                     ((ratx (mkrat x y)))
-                    (b+ ratx y))
-            )
+                    (simplify (rational (b+ (num ratx) (num y)) (den y)))))
             ((s48b= case rat-int); TODO change to b=
-                (newline)
-                (display "rat-int")
-                (b+ y x)
-            )
+                (b+ y x))
             ((s48b= case rat-rat); TODO change to b=
-                (newline)
-                (display "rat-rat")
                 (let* ((n1 (num x))
                        (d1 (den x))
                        (n2 (num y))
                        (d2 (den y)))
                     (if (s48b= d1 d2) ; TODO change to b=
-                        (let ()
-                            (simplify (rational (b+ n1 n2) d1)))
+                        (simplify (rational (b+ n1 n2) d1))
                         (let ((newd (b* d1 d2))
                               (newn1 (b* n1 d2))
                               (newn2 (b* n2 d1)))
-                            (b+ (rational newn1 newd) (rational newn2 newd))
-                        )
-                    )
-                )
-            )
-            (else (s48b+ x y))
-        )
-    )
+                            (simplify (rational (b+ newn1 newn2) newd))))))
+            (else (s48b+ x y))))
 )
 
 ; b*
@@ -290,6 +258,7 @@
                         #f)))
             (else (s48b= x y))))
 )
+
 ; eqv?
 (define (eqv? x y)
     (if (number? x)
@@ -325,6 +294,20 @@
 ;     )
 ; )
 
+(define (check x y)
+    (cond
+        ((integer? x)
+            (cond
+                ((integer? y) int-int)
+                ((rational? y) int-rat)
+                (else undef)))
+        ((rational? x)
+            (cond
+                ((integer? y) rat-int)
+                ((rational? y) rat-rat)
+                (else undef)))
+        (else undef))
+)
 ; check test cases
 ; (check 1 2)
 ; (check 1 (rational 3 2))
