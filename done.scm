@@ -2,6 +2,9 @@
 (define b= s48b=)
 (define b/ s48b/)
 (define b- s48b-)
+; helper functions for getting un-simplified num and den of rational
+(define (num x) (cadr x))
+(define (den x) (caddr x))
 ; check helper function ids case of binary operation
 (define int-int 1)
 (define int-rat 2)
@@ -10,19 +13,20 @@
 (define undef 5)
 
 (define (check x y)
-    (cond
-        ((integer? x)
-            (cond
-                ((integer? y) int-int)
-                ((rational? y) int-rat)
-                (else undef)))
-        ((rational? x)
-            (cond
-                ((integer? y) rat-int)
-                ((rational? y) rat-rat)
-                (else undef)))
-         (else undef)
-    )
+    (let ((x (simplify x))
+          (y (simplify y)))
+        (cond
+            ((integer? x)
+                (cond
+                    ((integer? y) int-int)
+                    ((rational? y) int-rat)
+                    (else undef)))
+            ((rational? x)
+                (cond
+                    ((integer? y) rat-int)
+                    ((rational? y) rat-rat)
+                    (else undef)))
+            (else undef)))
 )
 
 ; rational
@@ -112,17 +116,32 @@
         )
     )
 )
+
 ; simplify
 (define (simplify rat) 
     (cond
         ((integer? rat) rat)
         ((rational? rat)
-            (let* ((num (cadr rat))
-                (den (caddr rat))
-                (ratgcd (bgcd num den))
-                (newnum (b/ num ratgcd))
-                (newden (b/ den ratgcd)))
-                (if (= 1 newden) newnum (rational newnum newden))))
+            (let* ((n (num rat))
+                (d (den rat))
+                (ratgcd (bgcd n d))
+                (newnum (b/ n ratgcd))
+                (newden (b/ d ratgcd))
+                (int? (s48b= 1 (abs newden))))
+                (if int?
+                    (b/ (b* newnum d) ratgcd)
+                    (cond
+                        ((positive? n)
+                            (if (negative? d)
+                                (rational (b* -1 newnum) (b* -1 newden))
+                                (rational newnum newden)))
+                        ((positive? d)
+                            (rational newnum newden))
+                        (else
+                            (rational (abs newnum) (abs newden)))
+                    )
+                )
+            ))
         (else rat))
 )
 
@@ -170,29 +189,37 @@
         (else (b= 0 x))
     )
 )
-; helper functions for getting un-simplified num and den of rational
-(define (num x) (cadr x))
-(define (den x) (caddr x))
-(define (mkrat num rat)
-    (rational (b* num (den rat)) (den rat))
+
+(define (mkrat num rat) ; turns num into a rational that can be added to rat
+    (let ((d (abs (den rat))))
+        (rational (b* num d) d)
+    )
 )
 
-; b+
+; b+ TODO handle negative rationals
 (define (b+ x y)
-    (let ((case (check x y)))
+    (let* ((case (check x y)))
         (cond
             ((s48b= case int-int) ; TODO change to b=
+                (newline)
+                (display "int-int")
                 (s48b+ x y)
             )
             ((s48b= case int-rat); TODO change to b=
+                (newline)
+                (display "int-rat")
                 (let
                     ((ratx (mkrat x y)))
                     (b+ ratx y))
             )
             ((s48b= case rat-int); TODO change to b=
+                (newline)
+                (display "rat-int")
                 (b+ y x)
             )
             ((s48b= case rat-rat); TODO change to b=
+                (newline)
+                (display "rat-rat")
                 (let* ((n1 (num x))
                        (d1 (den x))
                        (n2 (num y))
@@ -215,7 +242,7 @@
 
 ; b*
 (define (b* x y)
-    (let ((case (check x y)))
+    (let* ((case (check x y)))
         (cond
             ((s48b= case int-int); TODO change to b=
                 (s48b* x y)
@@ -241,24 +268,36 @@
     )
 )
 
-; ; b-
-; (define (b- x y)
-;     (cond
-;         ((integer? x) (b= 0 x))
-;         ((rational? x) (b= 0 (numerator x)))
-;         (else (b= 0 x))
-;     )
-; )
-; 
-; ; b*
-; (define (b* x y)
-;     (cond
-;         ((integer? x) (b= 0 x))
-;         ((rational? x) (b= 0 (numerator x)))
-;         (else (b= 0 x))
-;     )
-; )
-; 
+; b=
+(define (b= x y)
+    (let* ((x (simplify x))
+           (y (simplify y))
+           (case (check x y)))
+        (cond
+            ((s48b= case int-int) ; TODO change to b=
+                (s48b= x y))
+            ((s48b= case int-rat); TODO change to b=
+                #f)
+            ((s48b= case rat-int); TODO change to b=
+                #f)
+            ((s48b= case rat-rat); TODO change to b=
+                (let ((n1 (num x))
+                      (d1 (den x))
+                      (n2 (num y))
+                      (d2 (den y)))
+                    (if (b= n1 n2)
+                        (if (b= d1 d2) #t #f)
+                        #f)))
+            (else (s48b= x y))))
+)
+; eqv?
+(define (eqv? x y)
+    (if (number? x)
+        (if (number? y) (b= x y) #f)
+        (eq? x y)
+    )
+)
+
 ; ; b/
 ; (define (b/ x y)
 ;     (cond
