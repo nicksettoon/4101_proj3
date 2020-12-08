@@ -1,19 +1,4 @@
-(define (eqv? x y)
-  (if (and (number? x) (number? y)) (b= x y)
-      (eq? x y)))
-
-
-(define (zero? x) (b= x 0))
-(define (positive? x) (b< 0 x))
-(define (negative? x) (b< x 0))
-
-
-; - is not implemented correctly
-(define (- . l)
-  (if (null? l) 0
-      (b- (car l) (apply - (cdr l)))))
-
-
+(lost "./settoonprog3.scm")
 (define (not b) (if b #f #t))
 (define (and x y) (if x y #f))
 (define (or x y) (if x #t y))
@@ -65,9 +50,3 @@
 
 (define (eof-object? x)
   (eq? x 'end-of-file))
-
-; just works for Test101 and Test102
-(define (/ x y)
-  (cond ((pair? y) 42)
-	((pair? x) '(rational 1 42))
-	(else "Error: / not yet implemented")))

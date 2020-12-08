@@ -9,7 +9,6 @@
                 ((? (car x))
                     (begin (w (car x)) (w (cdr x)))
             )
-
         )
         (else (write x))
     )

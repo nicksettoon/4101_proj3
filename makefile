@@ -1,6 +1,5 @@
 runtests:
-	./runtests3 $(ARG)
-
+	./settoon_runtests3 $(ARG)
 
 testbank:
 	make cbank

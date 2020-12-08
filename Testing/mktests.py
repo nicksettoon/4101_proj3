@@ -9,8 +9,8 @@ if __name__ == "__main__":
         if sys.argv[1] == '-all':
             #make tests in one file
             with open(f"Testing/bank.scm", encoding='ascii', mode='w') as new_file:
-                new_file.write(f",load ../s48.scm\n")
                 new_file.write(f",load ../test.scm\n")
+                new_file.write(f",load ../s48.scm\n")
                 for line in lines:
                     line = line.rstrip() # convert to string
                     if line == '' or line[0] == ';': # if line is empty, throw away
@@ -26,5 +26,6 @@ if __name__ == "__main__":
                 else:
                     with open(f"Testing/Test{i}.scm", encoding='ascii', mode='w') as new_file:
                         new_file.write(f",load ../test.scm\n")
+                        new_file.write(f",load ../s48.scm\n")
                         new_file.write(f"""(test "Test{1}" '{line}\n""")
                     i += 1
