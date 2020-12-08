@@ -68,17 +68,25 @@ cbank: clears the bank.scm file
 
 
 cfiles: removes all separate testing files made by mktests.py
+
 	rm -f ./Testing/Test*
 
 
 crep: clears the reports created by runtests script
+
 	rm -f ./testreport.txt
+
 	rm -f ./report.txt
+
 	rm -f ./Testing/testreport.txt
+
 	rm -f ./Testing/report.txt
 
 
 clean: squeaky
+
 	make cbank
+
 	make cfiles
+
 	make crep
