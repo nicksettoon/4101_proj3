@@ -33,6 +33,7 @@ runtests: simply runs the runtests3 script with arguments recieved from the make
 
 
 ./runtests3 $(ARG)
+
 	ARG can be [-init|-all]
 
 		-init : runs everything in init.scm. This was my testing file.
@@ -44,18 +45,25 @@ runtests: simply runs the runtests3 script with arguments recieved from the make
 
 
 testbank: clears the code base for another call to mktests.py, then calls it.
+
 	make cbank
+
 	make crep
+
 	python3 ./Testing/mktests.py -all
 
 
 testfiles: clears the code base for another call to mktests.py, then calls it to create n separate test files
+
 	make cfiles
+	
 	make crep
+
 	python3 ./Testing/mktests.py
 
 
 cbank: clears the bank.scm file
+
 	rm -f ./Testing/bank.scm
 
 
