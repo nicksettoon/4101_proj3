@@ -14,8 +14,18 @@
     (rational? 3)
 
 ;;nary operators
-; gcd TODO
-(gcd 1764 42)
+    (+ 3 (- third fourth half fifth) 4 2 5)
+    (/ 68040 5 6 9 2 3)
+    (+ (* 3 2) (- 2 4 1 3))
+    (= (* fourth fourth) (* half half half half))
+    (= 3 3 3 3 (rational 9 3))
+    (= third (/ (* 3 third) 3))
+    (+ (rational 1 2) (rational 1 3) (rational -1 2) (rational 1 3))
+    (+ (rational 1 2) (rational -1 3))
+    (+ (rational 1 2) 4)
+    (+ 8 3 4 (rational 1 2) 4)
+
+; gcd 
 ; +
     ; b+
         ;; int-int
@@ -114,6 +124,31 @@
         (b+ "asdf" 2)
 ; =
     ; b=
+; b< 
+    (b< 1 2)
+    (b< -3 4) 
+    (b< -8 -4)
+    (eq? #f (b< 4 -8))
+    (eq? #f (b< -3 -4))
+    (eq? #f (b< 1 -2))
+    ;; int-rat
+    (eq? #f (b< 4 (rational 9 -2)))
+    (b< 4 (rational -9 -2))
+    (eq? #f (b< 2 (rational 1 2)))
+    (eq? #f (b< -4 (rational 9 -2)))
+    (b< -4 (rational -9 -2))
+    ;; rat-int
+    (b< (rational 9 -2) 4)
+    (eq? #f (b< (rational -9 -2) 4))
+    (b< (rational 9 -2) -4)
+    (b< (rational 1 2) 2)
+    (eq? #f (b< (rational -9 -2) -4))
+    ;; rat-rat
+    (b< (rational -1 -2) (rational 4 5))
+    (b< (rational 5 -3) (rational 5 4))
+    (b< (rational 7 6) (rational 9 4))
+    (eq? #f (b< (rational -5 -3) (rational 5 3)))
+    (b< "asdf" 2)
 ; zero?
     (zero? 1)
     (zero? 0)
@@ -155,7 +190,21 @@
     (denominator (rational 6 -1))
     (denominator (rational -6 1))
     (denominator (rational -6 -1))
-; equal? TODO
+; equal?
+    (equal? '() '())
+    (eq? #f (equal? 1 '()))
+    (eq? #f (equal? '() 1))
+    (equal? (rational 1 2) (rational 2 4))
+    (eq? #f (equal? (rational 1 7) (rational 2 4)))
+    (equal? (rational 1 8) (list 'rational 1 8))
+    (eq? #f (equal? (rational 1 8) (list 1 8)))
+    (eq? #f (equal? (list 1 8) (rational 1 8)))
+    (eq? #f (equal? (list 1 2 3 4) (list 8 2 4 1)))
+    (eq? #f (equal? (list 8 2 4 1) (list 1 2 3 4)))
+    (equal? (list 1 2 3 4) (list 1 2 3 4))
+    (equal? (list 1 (list 2 3 4) 3 4) (list 1 (list 2 3 4) 3 4))
+    (eq? #f (equal? (list 1 (list 2 4) 3 4) (list 1 (list 2 3 4) 3 4)))
+
 ; w that works for rationals TODO
     (define x 42)
     (define (panic? x) (if x (display "Don't.") (display "Good.")))
@@ -174,7 +223,6 @@
     (w (panic? #f))
     (w x)
     
-;; if have time
     ; abs
         (abs -1)
         (abs 1)
@@ -182,7 +230,6 @@
         (abs (rational 5 -1))
         (abs (rational -5 1))
         (abs (rational -5 -1))
-    ; lcm
     ; quotient
         (quotient 126 3)
         (quotient 0 42)
@@ -199,7 +246,9 @@
         (remainder 42 0)
     ;; more n-ary operators
     ; max
+    (max (list 1 2 5454 15 24 123 4 15 51 2 15 1))
     ; min
+    (min (list 1 2 5454 15 24 123 4 15 51 2 15 1))
     ; =
     ; <
     ; >

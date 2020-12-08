@@ -1,9 +1,26 @@
-(define b< s48b<)
-(define b= s48b=)
-(define b/ s48b/)
 ; helper functions for getting un-simplified num and den of rational
 (define (num x) (cadr x))
 (define (den x) (caddr x))
+; +
+(define (+ . l)
+  (if (null? l) 0
+      (b+ (car l) (apply + (cdr l))))
+)
+; *
+(define (* . l)
+  (if (null? l) 1
+      (b* (car l) (apply * (cdr l))))
+)
+; -
+(define (- . l)
+    (if (null? l) 0
+        (b- (car l) (apply + (cdr l))))
+)
+; /
+(define (/ . l)
+    (if (null? l) 0
+        (b/ (car l) (apply * (cdr l))))
+)
 
 ; rational
 (define (rational n d) (list 'rational n d))
@@ -17,7 +34,7 @@
                     (if (procedure? x) #f
                         (if (pair? x) #f
                             (if (string? x) #f
-                                    (if (= x (round x)) #t #f)
+                                    (if (s48b= x (round x)) #t #f)
                             )
                         )
                     )
@@ -99,6 +116,11 @@
         )
     )
 )
+
+; nary gcd
+(define (gcd . l)
+  (if (null? l) 0
+      (bgcd (car l) (apply gcd (cdr l)))))
 
 ; simplify
 (define (simplify rat) 
@@ -269,6 +291,53 @@
             (else (s48b= x y))))
 )
 
+; b<
+(define (b< x y)
+    (let* ((x (simplify x))
+           (y (simplify y))
+           (case (check x y)))
+        (cond
+            ((b= case int-int)
+                (s48b< x y))
+            ((b= case int-rat)
+                (let* ((q (quotient (num y) (den y)))
+                      (diff (b- x q)))
+                    (cond
+                        ((negative? x)
+                            (if (negative? y)
+                                (if (b< (abs x) (abs y)) #f #t)
+                                (if (positive? diff) #f #t)))
+                        ; if diff is not pos, its 0 or neg, if 0 => q+rem > x, if neg, just q > x, for both y > x
+                        (else (if (positive? diff) #f #t)))))
+            ((b= case rat-int)
+                (let* ((q (quotient (num x) (den x)))
+                      (diff (b- y q)))
+                    (cond
+                        ((negative? x)
+                            (if (negative? y)
+                                (if (b< (abs x) (abs y)) #f #t)
+                                (if (positive? diff) #t #f)))
+                            ; if diff is not post its 0 or neg.
+                            ;if 0, then q+rem > y and x !< y #f, if neg, q > y and x !< y again
+                            ; if diff is pos, then y < q, remainder doesn't matter
+                            (else (if (positive? diff) #t #f)))))
+            ((b= case rat-rat)
+                (let* ((q1 (quotient (num x) (den x)))
+                       (q2 (quotient (num y) (den y)))
+                       (r1 (remainder (num x) (den x)))
+                       (r2 (remainder (num y) (den y)))
+                       (qdiff (b- q1 q2))
+                       (rdiff (b- r1 r2)))
+                      (if (negative? qdiff)
+                          #t ; y > x
+                          (if (zero? qdiff); check remainders
+                                (if (negative? rdiff)
+                                    #t ; y > x
+                                    #f); y < x
+                                #f))))
+            (else (s48b< x y))))
+)
+
 ; inverse
 (define (inverse x)
     (cond
@@ -297,21 +366,88 @@
 
 ; eqv?
 (define (eqv? x y)
-    (if (number? x)
-        (if (number? y) (b= x y) #f)
-    )
-        (eq? x y)
+    (cond
+        ((number? x)
+            (if (number? y) (b= x y) #f))
+        (else (eq? x y)))
 )
 
-; ; b<
-; (define (b< x y)
-;     (cond
-;         ((integer? x) (b= 0 x))
-;         ((rational? x) (b= 0 (numerator x)))
-;         (else (b= 0 x))
-;     )
-; )
-; check helper function ids case of binary operation
+; equal?
+(define (equal? x y)
+    (cond
+        ((eq? x '())
+            (if (eq? y '()) #t #f)) ; if both x and y are '()
+        ((eq? y '()) #f)
+        ((rational? x)
+            (if (rational? y) ; if both are rationals
+                (eqv? x y) #f))
+        ((pair? x)
+            (if (pair? y) ; if both are pairs?
+                (if (equal? (car x) (car y)) ; if the cars are equal
+                    (equal? (cdr x) (cdr y)) #f) #f))
+        ((pair? y) #f) ; if only y is pair
+        (else (eqv? x y))
+
+    )
+)
+; =
+(define (= x y . l)
+    (if (null? l) (b= x y)
+        (and (b= x y) (apply = (cons y l))))
+)
+
+; <
+(define (< x y . l)
+    (if (null? l) (b< x y)
+        (and (b< x y) (apply < (cons y l))))
+)
+
+; >
+(define (> x y . l)
+    (if (null? l) (b> x y)
+        (and (b> x y) (apply > (cons y l))))
+)
+
+; <=
+(define (<= x y . l)
+    (if (null? l) (b<= x y)
+        (and (b<= x y) (apply <= (cons y l))))
+)
+
+; >=
+(define (>= x y . l)
+    (if (null? l) (b>= x y)
+        (and (b>= x y) (apply >= (cons y l))))
+)
+
+; max
+    (define (max l) 
+        (let ()
+            (define (getm cmax x)
+                (cond
+                    ((null? x) cmax)
+                    (else (bmax (car x) (getm cmax (cdr x))))))
+            (getm (car l) (cdr l)))
+    )
+    ; bmax
+    (define (bmax x y)
+        (if (b< x y) y x))
+
+
+; min
+    (define (min l) 
+        (let ()
+            (define (getmn cmin x)
+                (cond
+                    ((null? x) cmin)
+                    (else (bmin (car x) (getm cmin (cdr x))))))
+            (getmn (car l) (cdr l))))
+    ; bmin
+    (define (bmin x y)
+        (if (b< x y) x y)
+    )
+
+
 (define int-int 1)
 (define int-rat 2)
 (define rat-int 3)
@@ -332,6 +468,11 @@
                 (else undef)))
         (else undef))
 )
+
+(define half (rational 1 2))
+(define third (rational 1 3))
+(define fourth (rational 1 4))
+(define fifth (rational 1 5))
 ; check test cases
 ; (check 1 2)
 ; (check 1 (rational 3 2))
