@@ -7,8 +7,11 @@ Apparently I did not have to rewrite all the builtin functions, however, once I 
 I did not get around to finishing (w). It is located in the cbl.scm
 Importing ini.scm last is all that is necessary to use my functions.
 
-ALL TESTS IN TEST BANK (for the most part) SHOULD OUTPUT #t
+ALL TESTS IN testbank.scm (for the most part) SHOULD OUTPUT #t
 
+I don't understand why, but I'm now receiving a "/bin/bash^M: bad interpreter: No such file or directory" error when attempting to run the settoon_runtests3 or runtests3 scripts. I can't seem to get them to work correctly. Regardless, the mktests.py should be creating all the test files correctly and they should be ready to run through the script should you figure out how to get the script to run.
+
+Please let me know if I need to help figure these issues out. Again, I'm terribly sorry for the late submission. I won't make excuses.
 
 There are several make targets available. In addition runtests has been altered slightly to make things easier for me to do faster testing when combined with vscode's tasks
 runtests: simply runs the runtests3 script with arguments recieved from the make target

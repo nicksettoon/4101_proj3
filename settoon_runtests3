@@ -16,7 +16,6 @@ case $1 in
     echo 'Testing testbank.scm'
     make testbank
     cd $TESTDIR
-    tests=0
     for i in bank.scm; do
         $SCHEME -a batch < $i >> testreport.txt 2>&1
     done

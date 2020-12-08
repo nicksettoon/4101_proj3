@@ -1,3 +1,9 @@
+runfiles:
+	./settoon_runtests3
+
+runbank:
+	./settoon_runtests3 -all
+
 runtests:
 	./settoon_runtests3 $(ARG)
 
@@ -27,3 +33,7 @@ clean:
 	make cbank
 	make cfiles
 	make crep
+
+chmod:
+	chmod 777 ./runtests3
+	chmod 777 ./settoon_runtests3

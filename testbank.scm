@@ -222,7 +222,6 @@
 (w (panic? #t))
 (w (panic? #f))
 (w x)
-
 ; abs
 (abs -1)
 (abs 1)
