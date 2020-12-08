@@ -30,11 +30,17 @@ runfiles: runs the settoon_runtests3 script with the -all argument
 
 
 runtests: simply runs the runtests3 script with arguments recieved from the make target
+
+
 ./runtests3 $(ARG)
-ARG can be [-init|-all]
-	-init : runs everything in init.scm. This was my testing file.
-	-all : calls the "testbank" make target which makes a file in ./Testing/ called bank.scm and feeds all the lines from that file into scheme
-	no arguments to this make target runs the script as normal, calling the testfiles script first in order to turn each line from testbank.scm into a separate file with the form: (test "Testid" line_from_testbank.scm)
+	ARG can be [-init|-all]
+
+		-init : runs everything in init.scm. This was my testing file.
+
+		-all : calls the "testbank" make target which makes a file in ./Testing/ called bank.scm and feeds all the lines from that file into scheme
+
+		no arguments to this make target runs the script as normal, calling the testfiles script first in order to turn each line from testbank.scm into a separate file with the form: (test "Testid" line_from_testbank.scm)
+
 
 
 testbank: clears the code base for another call to mktests.py, then calls it.
