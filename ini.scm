@@ -1,48 +1,18 @@
-
 (define (eqv? x y)
   (if (and (number? x) (number? y)) (b= x y)
       (eq? x y)))
 
-(define (b> x y) (b< y x))
-(define (b<= x y) (or (b= x y) (b< x y)))
-(define (b>= x y) (or (b= x y) (b> x y)))
-
-(define (= x y . l)
-  (if (null? l) (b= x y)
-      (and (b= x y) (apply = (cons y l)))))
-
-(define (< x y . l)
-  (if (null? l) (b< x y)
-      (and (b< x y) (apply < (cons y l)))))
-
-(define (> x y . l)
-  (if (null? l) (b> x y)
-      (and (b> x y) (apply > (cons y l)))))
-
-(define (<= x y . l)
-  (if (null? l) (b<= x y)
-      (and (b<= x y) (apply <= (cons y l)))))
-
-(define (>= x y . l)
-  (if (null? l) (b>= x y)
-      (and (b>= x y) (apply >= (cons y l)))))
 
 (define (zero? x) (b= x 0))
 (define (positive? x) (b< 0 x))
 (define (negative? x) (b< x 0))
 
-(define (+ . l)
-  (if (null? l) 0
-      (b+ (car l) (apply + (cdr l)))))
 
 ; - is not implemented correctly
 (define (- . l)
   (if (null? l) 0
       (b- (car l) (apply - (cdr l)))))
 
-(define (* . l)
-  (if (null? l) 1
-      (b* (car l) (apply * (cdr l)))))
 
 (define (not b) (if b #f #t))
 (define (and x y) (if x y #f))
